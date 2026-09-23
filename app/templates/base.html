@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title or 'Careline' }} | Daily Care</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+{% if session.get('user_id') %}
+<aside class="sidebar"><a class="brand" href="{{ url_for('main.dashboard') }}"><span class="brand-mark">+</span><span>careline</span></a><nav>
+<a href="{{ url_for('main.dashboard') }}">Overview</a><a href="{{ url_for('main.medicines') }}">Medicines</a><a href="{{ url_for('main.medicine_history') }}">Medicine history</a><a href="{{ url_for('main.water') }}">Water intake</a><a href="{{ url_for('main.activities') }}">Daily routine</a><a href="{{ url_for('main.health') }}">Health records</a><a href="{{ url_for('main.reports') }}">Reports</a><a href="{{ url_for('main.notifications') }}">Notifications</a><a href="{{ url_for('main.profile') }}">Profile</a><a href="{{ url_for('main.settings') }}">Settings</a>
+</nav><div class="sidebar-foot"><small>Reminder & record system</small><a href="{{ url_for('main.logout') }}">Sign out</a></div></aside>
+<main class="content"><header class="topbar"><div><span class="eyebrow">{{ today_label or 'PERSONAL CARE' }}</span><h1>{{ heading or 'Good to see you' }}</h1></div><div class="avatar">{{ current_user().full_name[0]|upper if current_user() else 'U' }}</div></header>
+{% else %}<main class="auth-shell">{% endif %}
+{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-stack">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
+{% block content %}{% endblock %}
+</main><script src="{{ url_for('static', filename='app.js') }}"></script>
+</body></html>
