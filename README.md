@@ -19,7 +19,7 @@ Change `SECRET_KEY` in any non-local deployment. The schema is also available in
 
 ## Deploy on Render
 
-Push this repository to GitHub, create a Render Web Service from it, and use `pip install -r requirements.txt` as the build command and `gunicorn run:app` as the start command. Set `SECRET_KEY` to a generated secret and set `DATABASE_URL` to a hosted MySQL connection string such as `mysql+pymysql://user:password@host/database`. The included `render.yaml` can prefill the service settings.
+Push this repository to GitHub, create a Render Web Service from it, and use `pip install -r requirements.txt` as the build command and `gunicorn --bind 0.0.0.0:$PORT run:app` as the start command. Set `SECRET_KEY` to a generated secret and set `DATABASE_URL` to a hosted MySQL connection string such as `mysql+pymysql://user:password@host/database`. The included `render.yaml` can prefill the service settings.
 
 ## Scope
 
