@@ -1,0 +1,38 @@
+{% extends 'base.html' %}{% set heading = 'Admin dashboard' %}{% block content %}
+<section class="page-intro"><span class="eyebrow">ADMIN CONTROL PANEL</span><p class="muted">Monitor users, medicine activity, and reminder usage across the system.</p></section>
+<section class="stats">
+  <div class="stat-card"><span>Total users</span><strong>{{ total_users }}</strong></div>
+  <div class="stat-card"><span>Total medicines</span><strong>{{ total_medicines }}</strong></div>
+  <div class="stat-card"><span>Active reminders</span><strong>{{ total_reminders }}</strong></div>
+  <div class="stat-card"><span>Doses recorded</span><strong>{{ total_doses }}</strong></div>
+</section>
+<section class="stats">
+  <div class="stat-card"><span>Taken</span><strong>{{ taken }}</strong></div>
+  <div class="stat-card"><span>Skipped / Missed</span><strong>{{ skipped }}</strong></div>
+</section>
+<div class="two-column">
+  <section class="panel">
+    <div class="panel-heading"><h2>Recent users</h2></div>
+    {% for user in recent_users %}
+      <div class="list-row">
+        <div class="list-main"><strong>{{ user.full_name }}</strong><span>{{ user.email }}</span></div>
+        <span class="badge {{ 'success' if user.active else 'missed' }}">{{ 'Active' if user.active else 'Inactive' }}</span>
+        {% if user.id != current_user().id %}<form method="post" action="{{ url_for('main.toggle_user_status', user_id=user.id) }}"><button class="button tiny" type="submit">{{ 'Deactivate' if user.active else 'Reactivate' }}</button></form>{% endif %}
+      </div>
+    {% else %}
+      <div class="empty">No users yet.</div>
+    {% endfor %}
+  </section>
+  <section class="panel">
+    <div class="panel-heading"><h2>Recent medicine activity</h2></div>
+    {% for log in recent_logs %}
+      <div class="list-row">
+        <div class="list-main"><strong>{{ log.schedule.medicine.name }}</strong><span>{{ log.event_date }} · {{ log.status }}</span></div>
+        <span class="badge {{ log.status|lower }}">{{ log.status }}</span>
+      </div>
+    {% else %}
+      <div class="empty">No medicine activity recorded.</div>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

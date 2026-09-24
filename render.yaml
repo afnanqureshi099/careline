@@ -9,3 +9,13 @@ services:
         generateValue: true
       - key: DATABASE_URL
         sync: false
+  - type: worker
+    name: careline-reminder-worker
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python scheduler.py
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false

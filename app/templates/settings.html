@@ -1,1 +1,49 @@
-{% extends 'base.html' %}{% set heading = 'Settings' %}{% block content %}<section class="page-intro"><span class="eyebrow">PERSONAL PREFERENCES</span><p class="muted">Choose reminder preferences for your own tracking. Targets are not medical recommendations.</p></section><section class="panel form-panel narrow"><form method="post" class="form-grid"><label>Daily water target (ml)<input type="number" name="water_target_ml" min="1" value="{{ settings.water_target_ml }}" required></label><label>Water reminder times<input name="water_reminder_times" value="{{ settings.water_reminder_times or '' }}" placeholder="08:00, 12:00, 16:00"></label><button class="button primary">Save settings</button></form></section>{% endblock %}
+{% extends 'base.html' %}{% set heading = 'Settings' %}{% block content %}
+<section class="page-intro"><span class="eyebrow">PERSONAL PREFERENCES</span><p class="muted">Control how reminders, notifications, and your daily care plan are managed.</p></section>
+<section class="panel form-panel">
+  <form method="post" class="form-grid">
+    <div class="panel-heading span-2"><h2>Account settings</h2></div>
+    <label>Full name<input name="full_name" value="{{ user.full_name }}"></label>
+    <label>Email<input value="{{ user.email }}" disabled></label>
+    <label>Phone number<input name="phone" value="{{ user.phone or '' }}" inputmode="numeric" pattern="[0-9]{10}" placeholder="10 digits"></label>
+    <label>Profile picture<input type="text" value="Default avatar" disabled></label>
+    <label>Change password<input type="password" name="password" placeholder="Optional"></label>
+    <label>Logout<a class="button secondary" href="{{ url_for('main.logout') }}">Sign out</a></label>
+
+    <div class="panel-heading span-2"><h2>Notification settings</h2></div>
+    <label><input type="checkbox" name="reminder_enabled" {% if settings.reminder_enabled %}checked{% endif %}> Enable medicine reminders</label>
+    <label>Reminder sound<select name="reminder_sound"><option {% if settings.reminder_sound == 'On' %}selected{% endif %}>On</option><option {% if settings.reminder_sound == 'Off' %}selected{% endif %}>Off</option></select></label>
+    <label><input type="checkbox" name="vibration" {% if settings.vibration %}checked{% endif %}> Vibration</label>
+    <label>Reminder timing (minutes before)<input type="number" name="notification_timing_minutes" min="0" value="{{ settings.notification_timing_minutes or 10 }}"></label>
+    <label><input type="checkbox" name="push_notifications" {% if settings.push_notifications %}checked{% endif %}> Push notifications</label>
+    <label><input type="checkbox" name="email_notifications" {% if settings.email_notifications %}checked{% endif %}> Email / SMS notifications</label>
+
+    <div class="panel-heading span-2"><h2>Medicine reminder settings</h2></div>
+    <label>Default reminder time<input type="time" name="default_reminder_time" value="{{ settings.default_reminder_time or '08:00' }}"></label>
+    <label>Snooze duration (min)<input type="number" name="snooze_duration" min="5" step="5" value="{{ settings.snooze_duration or 10 }}"></label>
+    <label><input type="checkbox" name="repeat_missed" {% if settings.repeat_missed %}checked{% endif %}> Repeat reminders for missed doses</label>
+    <label>Daily / weekly preference<select name="frequency"><option>Daily</option><option>Weekly</option></select></label>
+
+    <div class="panel-heading span-2"><h2>Time & date</h2></div>
+    <label>Time zone<input name="time_zone" value="{{ settings.time_zone or 'Asia/Kolkata' }}"></label>
+    <label>Time format<select name="time_format"><option {% if settings.time_format == '12-hour' %}selected{% endif %}>12-hour</option><option {% if settings.time_format == '24-hour' %}selected{% endif %}>24-hour</option></select></label>
+    <label>Date format<select name="date_format"><option {% if settings.date_format == 'DD/MM/YYYY' %}selected{% endif %}>DD/MM/YYYY</option><option {% if settings.date_format == 'MM/DD/YYYY' %}selected{% endif %}>MM/DD/YYYY</option></select></label>
+
+    <div class="panel-heading span-2"><h2>Appearance</h2></div>
+    <label>Theme<select name="theme"><option {% if settings.theme == 'Light' %}selected{% endif %}>Light</option><option {% if settings.theme == 'Dark' %}selected{% endif %}>Dark</option><option {% if settings.theme == 'System default' %}selected{% endif %}>System default</option></select></label>
+    <label>Language<select name="language"><option {% if settings.language == 'English' %}selected{% endif %}>English</option><option {% if settings.language == 'Kannada' %}selected{% endif %}>Kannada</option><option {% if settings.language == 'Hindi' %}selected{% endif %}>Hindi</option></select></label>
+
+    <div class="panel-heading span-2"><h2>Caregiver settings</h2></div>
+    <label>Caregiver name<input name="caregiver_name" value="{{ settings.caregiver_name or '' }}"></label>
+    <label>Emergency contact<input name="caregiver_contact" value="{{ settings.caregiver_contact or '' }}"></label>
+    <label><input type="checkbox" name="caregiver_access" {% if settings.caregiver_access %}checked{% endif %}> Allow caregiver to view schedule</label>
+    <div class="span-2 caregiver-actions">{% if caregiver_url %}<p class="muted">Share this private read-only link with your caregiver:</p><input value="{{ caregiver_url }}" readonly aria-label="Caregiver access link"><form method="post" action="{{ url_for('main.revoke_caregiver_access') }}"><button class="button secondary" type="submit">Revoke access</button></form>{% else %}<p class="muted">Generate a private read-only link for a trusted caregiver.</p><button class="button secondary" type="submit" formaction="{{ url_for('main.create_caregiver_access') }}">Generate caregiver link</button>{% endif %}</div>
+
+    <div class="panel-heading span-2"><h2>Water & data</h2></div>
+    <label>Daily water target (L)<input type="number" name="water_target_ml" min="1" value="{{ settings.water_target_ml / 1000 }}" step="0.1"></label>
+    <label>Water reminder times<input name="water_reminder_times" value="{{ settings.water_reminder_times or '' }}" placeholder="08:00, 12:00, 16:00"></label>
+
+    <button class="button primary span-2" type="submit">Save settings</button>
+  </form>
+</section>
+{% endblock %}

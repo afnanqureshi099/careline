@@ -15,7 +15,18 @@ A patient-focused reminder and record-management application built with Flask, H
 5. Start the app: `python run.py`
 6. Open http://127.0.0.1:5000
 
-Change `SECRET_KEY` in any non-local deployment. The schema is also available in `schema.sql` for MySQL review or manual setup.
+For deployment, set `SECRET_KEY`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, and `DATABASE_URL` as platform secrets. Never commit these values to the repository. The schema is also available in `schema.sql` for MySQL review or manual setup.
+
+### Render environment setup
+
+In the Render service environment settings, add:
+
+- `SECRET_KEY`: generate a long random value.
+- `ADMIN_EMAIL`: the administrator's real email address.
+- `ADMIN_PASSWORD`: a strong password with uppercase, lowercase, number, and special character.
+- `DATABASE_URL`: a persistent hosted database connection string.
+
+After saving the variables, redeploy the web service and worker. The configured admin password is used when the admin account is first created or when the legacy local admin is migrated. After the first login, change it from Settings; later restarts will preserve that changed password.
 
 ## Deploy on Render
 

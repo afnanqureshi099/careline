@@ -1,1 +1,22 @@
-{% extends 'base.html' %}{% set heading = 'Reports' %}{% block content %}<section class="page-intro"><span class="eyebrow">WEEKLY VIEW · {{ week_start.strftime('%b %d') }} - {{ today.strftime('%b %d') }}</span><p class="muted">Simple activity totals for your own tracking.</p></section><section class="stats"><div class="stat-card"><span>Doses recorded</span><strong>{{ logs|length }}</strong></div><div class="stat-card"><span>Taken</span><strong>{{ logs|selectattr('status','equalto','Taken')|list|length }}</strong></div><div class="stat-card"><span>Skipped</span><strong>{{ logs|selectattr('status','equalto','Skipped')|list|length }}</strong></div><div class="stat-card"><span>Water logged</span><strong>{{ '%.1f'|format(water_total / 1000) }} <small>L</small></strong></div></section><section class="panel"><div class="panel-heading"><h2>Medicine activity</h2></div>{% for log in logs %}<div class="list-row"><div class="time">{{ log.event_date }}</div><div class="list-main"><strong>{{ log.schedule.medicine.name }}</strong><span>{{ log.schedule.time.strftime('%I:%M %p') }}</span></div><span class="badge {{ log.status|lower }}">{{ log.status }}</span></div>{% else %}<div class="empty">No medicine activity in this period.</div>{% endfor %}</section>{% endblock %}
+{% extends 'base.html' %}
+{% set heading = 'Reports' %}
+{% block content %}
+<section class="page-intro">
+  <span class="eyebrow">{{ period|title }} VIEW · {{ week_start.strftime('%b %d') }} - {{ today.strftime('%b %d') }}</span>
+  <p class="muted">Simple activity totals for your own tracking.</p>
+  <a class="button secondary" href="{{ url_for('main.export_reports', start_date=start_date, end_date=end_date) }}">Export CSV</a>
+  <form class="search" method="get">
+    <input type="date" name="start_date" value="{{ request.args.get('start_date', start_date) }}">
+    <input type="date" name="end_date" value="{{ request.args.get('end_date', end_date) }}">
+    <select name="status"><option value="">All statuses</option>{% for value in ['Taken','Skipped','Missed','Upcoming','Remind Later'] %}<option value="{{ value }}" {% if request.args.get('status') == value %}selected{% endif %}>{{ value }}</option>{% endfor %}</select>
+    <button class="button secondary">Apply</button>
+  </form>
+</section>
+<section class="stats">
+  <div class="stat-card"><span>Doses recorded</span><strong>{{ total_doses or logs|length }}</strong></div>
+  <div class="stat-card"><span>Taken</span><strong>{{ total_taken or logs|selectattr('status','equalto','Taken')|list|length }}</strong></div>
+  <div class="stat-card"><span>Skipped</span><strong>{{ total_skipped or logs|selectattr('status','equalto','Skipped')|list|length }}</strong></div>
+  <div class="stat-card"><span>Water logged</span><strong>{{ '%.2f'|format(water_total / 1000) }} <small>L</small></strong></div>
+</section>
+<section class="panel"><div class="panel-heading"><h2>Medicine activity</h2></div>{% for log in logs %}<div class="list-row"><div class="time">{{ log.event_date }}</div><div class="list-main"><strong>{{ log.schedule.medicine.name }}</strong><span>{{ log.schedule.time.strftime('%I:%M %p') }}</span></div><span class="badge {{ log.status|lower }}">{{ log.status }}</span></div>{% else %}<div class="empty">No medicine activity in this period.</div>{% endfor %}</section>
+{% endblock %}
